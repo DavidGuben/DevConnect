@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
-const bcrpyt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 // Load User model
 const User = require('../../models/User');
