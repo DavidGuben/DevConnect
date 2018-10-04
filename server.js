@@ -1,12 +1,13 @@
 // Dependencies
-const express = require('express');
-const mongoose = require('mongoose');
+const express    = require('express');
+const mongoose   = require('mongoose');
 const bodyParser = require('body-parser');
+const passport   = require('passport');
 
 // Routes
-const users = require('./routes/api/users');
+const users   = require('./routes/api/users');
 const profile = require('./routes/api/profile');
-const posts = require('./routes/api/posts');
+const posts   = require('./routes/api/posts');
 
 const app = express();
 
@@ -24,7 +25,11 @@ mongoose
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
-app.get('/', (req, res) => res.send('Hello world'));
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport config
+require('./config/passport')(passport);
 
 // Use Routes
 app.use('/api/users', users);
