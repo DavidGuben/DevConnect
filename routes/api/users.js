@@ -77,8 +77,8 @@ router.post(
         })
 });
 
-// @route GET api/users/login
-// @desc  Login user / Returns JWT Token
+// @route  GET api/users/login
+// @desc   Login user / Returns JWT Token
 // @access Public
 router.post('/login', (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);
@@ -123,8 +123,8 @@ router.post('/login', (req, res) => {
         });
 });
 
-// @route GET api/users/current
-// @desc  Return current user
+// @route  GET api/users/current
+// @desc   Return current user
 // @access Private
 router.get('/current', passport.authenticate('jwt', { session: false }),
  (req, res) => {
