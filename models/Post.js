@@ -1,10 +1,13 @@
+// Require mongoose dependency
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
+// Schema for user Post(s)
 const PostSchema = new Schema({
     user: {
-        type: Schema.Types.ObjectId,
-        ref: 'users'
+        type: Schema.Types.ObjectId,  // Pull users unique id
+        ref: 'users'  // references the 'users' db collection
     },
     text: {
         type: String,
@@ -16,6 +19,7 @@ const PostSchema = new Schema({
     avatar: {
         type: String
     },
+    // Likes will be stored by unique ID
     likes: [
         {
             user: {
@@ -24,6 +28,7 @@ const PostSchema = new Schema({
             }
         }
     ],
+    // Comments will be stored by unique ID
     comments: [
         {
             user: {

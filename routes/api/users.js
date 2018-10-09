@@ -1,3 +1,4 @@
+// Dependencies
 const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
@@ -13,28 +14,38 @@ const validateLoginInput = require('../../validation/login');
 // Load User model
 const User = require('../../models/User');
 
-// @route GET api/users/test
-// @desc  Tests users route
+// @route  GET api/users/test
+// @desc   Tests users route
 // @access Public
-router.get('/test', (req, res) => res.json({msg: "Users works"}));
+router.get('/test', (req, res) => res.json({ msg: "Users route works" }));
 
-// @route GET api/users/register
-// @desc  Register user
+// @route  POST api/users/register
+// @desc   Register user
 // @access Public
-router.post('/register', (req, res) => {
+router.post(
+    '/register',
+    (req, res) => {
+    // extract errors and isValid from '../../validation/register' using destructuring
+    // Parse incoming request bodies(body-parser) in a middleware(Validator) before handlers,
+    // available under the req.body property.
     const { errors, isValid } = validateRegisterInput(req.body);
 
-    // Check validation
+    // if validation fails shoot error
     if(!isValid) {
+        // return all triggered errors
         return res.status(400).json(errors);
     }
-
+    
+    // User is the mongoose model defined in '../../models/User'
+    // find one user in the db with that email
     User.findOne({ email: req.body.email })
-        .then(user => {
-            if(user) {
+        .then(user => { // then take the result and assign it to user
+            if(user) {  // if the result exists shoot error
                 errors.email = 'Email already exists.'
                 return res.status(400).json(errors);
-            } else {
+            } else { 
+                // create a variable that holds the avatar associated with that email
+                // the default property holds a default img for no associated pictures
                 const avatar = gravatar.url(req.body.email, {
                     s: '200', // Size
                     r: 'pg', // Rating
@@ -49,14 +60,17 @@ router.post('/register', (req, res) => {
                     password: req.body.password
                 });
 
-                // Encrypt password: Generate salt w/ bcryptjs, hash password w/ salt, set password to hash.
+                // Encrypt password: 
+                // Generate salt w/ bcryptjs, hash password w/ salt, set password to hash.
                 bcrypt.genSalt(10, (err, salt) => {
                     bcrypt.hash(newUser.password, salt, (err, hash) => {
                         if(err) throw err;
+                        // set password to encrypted hash
                         newUser.password = hash;
+                        // Save newUser to MongoDB
                         newUser.save()
-                        .then(user => res.json(user))
-                        .catch(err => console.log(err));
+                        .then(user => res.json(user))  // return user in json format
+                        .catch(err => console.log(err)); // log any errors
                     })
                 })
             }
